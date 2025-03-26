@@ -1,19 +1,54 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -O2 -g
+UNAME := $(shell uname)
 
-SRCS = heat_seq.c heat_par.c
-OBJS = $(SRCS:.c=.o)
-EXEC = heat_seq heat_par
+ifeq ($(UNAME), Darwin)
+    CC = gcc-14
+else
+    CC = gcc
+endif
 
-all: $(EXEC) $(OBJS)
+CFLAGS = -Wall -Wextra -Ofast -g -fopenmp
+AR = ar rcs
 
-$(EXEC): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+# Dossiers
+SRCDIR = src
+OUTDIR = out
+LIBDIR = image_lecture
 
-%.o: %.c
+# Fichiers sources et objets
+SRCS = $(SRCDIR)/heat_seq.c $(SRCDIR)/heat_par.c
+OBJS = $(SRCS:$(SRCDIR)/%.c=$(OUTDIR)/%.o)
+
+# Librairie
+LIB_SRCS = $(LIBDIR)/functions.c
+LIB_OBJS = $(LIB_SRCS:$(LIBDIR)/%.c=$(OUTDIR)/%.o)
+LIB_NAME = libimage.a
+LIB_PATH = $(OUTDIR)/$(LIB_NAME)
+
+# Exécutables
+EXEC = $(OUTDIR)/heat_seq $(OUTDIR)/heat_par
+
+all: $(LIB_PATH) $(EXEC)
+
+# Compilation des exécutables en utilisant la librairie
+$(OUTDIR)/%: $(OUTDIR)/%.o $(LIB_PATH)
+	$(CC) $(CFLAGS) -o $@ $^ -L$(OUTDIR) -limage
+
+# Compilation de la librairie statique
+$(LIB_PATH): $(LIB_OBJS)
+	$(AR) $@ $^
+
+# Compilation des fichiers objets
+$(OUTDIR)/%.o: $(SRCDIR)/%.c | $(OUTDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(OUTDIR)/%.o: $(LIBDIR)/%.c | $(OUTDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Création du dossier de sortie
+$(OUTDIR):
+	mkdir -p $@
+
 clean:
-	rm -f $(OBJS) $(EXEC)
+	rm -f $(OBJS) $(LIB_OBJS) $(EXEC) $(LIB_PATH)
 
 .PHONY: all clean
