@@ -1,11 +1,11 @@
-CC = clang
+CC = gcc
 CFLAGS = -Wall -Wextra -O2 -g
 
-SRCS = heat.c
+SRCS = heat_seq.c heat_par.c
 OBJS = $(SRCS:.c=.o)
-EXEC = heat
+EXEC = heat_seq heat_par
 
-all: $(EXEC)
+all: $(EXEC) $(OBJS)
 
 $(EXEC): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
