@@ -5,8 +5,8 @@
 #include "../image_lecture/functions.h"
 
 // #define SIDE 500 - old version
-#define filename "images/chat_ascii.pgm"
-#define file_out "images/image_out.pgm"
+// #define filename "images/papoch.pgm" - old version
+// #define file_out "images/image_out_seq.pgm" - old version
 
 typedef enum {
     DIM_1D = 1,
@@ -18,7 +18,7 @@ typedef enum {
  * @param dimension: 1D or 2D
  * @return time of execution
  */
-int convolution(Dimension dimension) {
+int convolution(Dimension dimension, char *filename, char *file_out) {
     // matrix allocation - old version
     // float * mat = (float *) calloc (SIDE*SIDE,sizeof(float));
     // float * mat_dt = (float *) calloc (SIDE*SIDE,sizeof(float));
@@ -93,36 +93,42 @@ int convolution(Dimension dimension) {
     free(mat);
     free(T);
 
-    printf("\n\n\n"); 
+    printf("One sequential execution finished.\tExecution time: %f\n", (end_time - start_time)); 
     return (end_time - start_time);
 }
 
 int main(int argc, char* argv[]) {
-    char *arg_2 = malloc(10);
+    char *arg_4 = malloc(10);
     Dimension dim;
     double exec_time;
     double moy_time = 0;
 
-    // If not specified, ask for dimension
-    if (argc == 1) {
+    // If image not specified
+    if (argc < 3) {
+        printf("Error: Missing arguments.\nUse: %s <image> <output> [dimension]\n", argv[0]);
+        printf("Example: %s images/papoch.pgm images/image_out_seq.pgm 1D\n", argv[0]);
+        return (EXIT_FAILURE);
+    } // If not specified, ask for dimension
+    else if (argc != 4) {
         printf("Dimension: (1D or 2D)\n");
-        scanf("%s", arg_2);
-    } else strcpy(arg_2,argv[1]);
+        scanf("%s", arg_4);
+    } else strcpy(arg_4,argv[3]);
 
     // Dimension format verification
-    if (strcmp(arg_2, "1D") == 0) {
+    if (strcmp(arg_4, "1D") == 0) {
         dim = DIM_1D;
-    } else if (strcmp(arg_2, "2D") == 0) {
+    } else if (strcmp(arg_4, "2D") == 0) {
         dim = DIM_2D;
     } else {
         printf("Error: Dimension not recognized, please select between '1D' or '2D'\n");
         return (EXIT_FAILURE);
     }
-    free(arg_2);
+    free(arg_4);
 
+    
     // Convolution according to dimension
     for (int i = 0; i < 10; i++) {
-        exec_time = convolution(dim);
+        exec_time = convolution(dim, argv[1], argv[2]);
         moy_time += exec_time;
     }
     moy_time /= 10;

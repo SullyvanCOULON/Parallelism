@@ -15,7 +15,7 @@ OUTDIR = out
 LIBDIR = image_lecture
 
 # Fichiers sources et objets
-SRCS = $(SRCDIR)/heat_seq.c $(SRCDIR)/heat_par.c
+SRCS = $(SRCDIR)/heat_seq.c $(SRCDIR)/heat_par.c $(SRCDIR)/heat_simd.c
 OBJS = $(SRCS:$(SRCDIR)/%.c=$(OUTDIR)/%.o)
 
 # Librairie
@@ -25,7 +25,7 @@ LIB_NAME = libimage.a
 LIB_PATH = $(OUTDIR)/$(LIB_NAME)
 
 # Exécutables
-EXEC = $(OUTDIR)/heat_seq $(OUTDIR)/heat_par
+EXEC = $(OUTDIR)/heat_seq $(OUTDIR)/heat_par $(OUTDIR)/heat_simd
 
 all: $(LIB_PATH) $(EXEC)
 
