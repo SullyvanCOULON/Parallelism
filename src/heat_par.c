@@ -42,7 +42,8 @@ int convolution(Dimension dimension, char *filename, char *file_out) {
     mat = (float *) calloc (rw*cl,sizeof(float));
 
     float nn,sn,en,wn, cp;
-    float d2x, d2y = 0.0f;
+    float d2x = 0.0f;
+    float d2y = 0.0f;
     float h = 1;
     float dt = 0.0001;
     float t = 1;
