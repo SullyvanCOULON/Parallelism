@@ -6,7 +6,7 @@ else
     CC = gcc
 endif
 
-CFLAGS = -Wall -Wextra -Ofast -g -fopenmp -ftree-vectorize -fopt-info-vec
+CFLAGS = -Wall -Wextra -O3 -g -fopenmp -ftree-vectorize -fopt-info-vec
 AR = ar rcs
 
 # Dossiers

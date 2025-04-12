@@ -18,7 +18,7 @@ typedef enum {
  * @param dimension: 1D or 2D
  * @return time of execution
  */
-int convolution(Dimension dimension, char *filename, char *file_out) {
+double convolution(Dimension dimension, char *filename, char *file_out) {
     // matrix allocation - old version
     // float * mat = (float *) calloc (SIDE*SIDE,sizeof(float));
     // float * mat_dt = (float *) calloc (SIDE*SIDE,sizeof(float));
@@ -38,6 +38,9 @@ int convolution(Dimension dimension, char *filename, char *file_out) {
     if (T == 0) {
         printf("Error: Image reading failed\n");
         return (EXIT_FAILURE);
+    }
+    if (dimension == DIM_1D) {
+        cl = 1;
     }
     mat = (float *) calloc (rw*cl,sizeof(float));
 
@@ -59,8 +62,9 @@ int convolution(Dimension dimension, char *filename, char *file_out) {
     for (int k = 0; k < N; k++) {
         omp_set_num_threads(num_threads);
 
-        #pragma omp parallel for simd schedule(static) collapse(2) firstprivate(d2x, d2y) private(nn, sn, wn, en, cp, F) 
+        #pragma omp parallel for schedule(static) firstprivate(d2x, d2y) private(nn, sn, wn, en, cp, F) 
         for (int i = 0; i < cl; i++) { 
+            #pragma omp simd
             for (int j = 0; j < rw; j++) {
 
                 // Neighborhoods
@@ -85,7 +89,7 @@ int convolution(Dimension dimension, char *filename, char *file_out) {
         }
         #pragma omp barrier
 
-        #pragma omp parallel for simd
+        #pragma omp parallel for
         for (int i = 0; i < rw * cl; i++) {
             T[i] = mat[i];
         }
@@ -137,12 +141,12 @@ int main(int argc, char* argv[]) {
     free(arg_4);
 
     // Convolution according to dimension
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 5; i++) {
         exec_time = convolution(dim, argv[1], argv[2]);
         moy_time += exec_time;
     }
-    moy_time /= 10;
-    printf("Average execution time: %f\n", moy_time);
+    moy_time /= 5;
+    printf("Average execution time: %f\n\n", moy_time);
     
     return (EXIT_SUCCESS);
 }

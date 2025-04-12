@@ -18,7 +18,7 @@ typedef enum {
  * @param dimension: 1D or 2D
  * @return time of execution
  */
-int convolution(Dimension dimension, char *filename, char *file_out) {
+double convolution(Dimension dimension, char *filename, char *file_out) {
     // matrix allocation - old version
     // float * mat = (float *) calloc (SIDE*SIDE,sizeof(float));
     // float * mat_dt = (float *) calloc (SIDE*SIDE,sizeof(float));
@@ -37,6 +37,10 @@ int convolution(Dimension dimension, char *filename, char *file_out) {
         printf("Error: Image reading failed\n");
         return (EXIT_FAILURE);
     }
+    if (dimension == DIM_1D) {
+        cl = 1;
+    }
+
     mat = (float *) calloc (rw*cl,sizeof(float));
 
     float nn,sn,en,wn, cp;
@@ -127,12 +131,12 @@ int main(int argc, char* argv[]) {
 
     
     // Convolution according to dimension
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 5; i++) {
         exec_time = convolution(dim, argv[1], argv[2]);
         moy_time += exec_time;
     }
-    moy_time /= 10;
-    printf("Average execution time: %f\n", moy_time);
+    moy_time /= 5;
+    printf("Average execution time: %f\n\n", moy_time);
     
     return (EXIT_SUCCESS);
 }
